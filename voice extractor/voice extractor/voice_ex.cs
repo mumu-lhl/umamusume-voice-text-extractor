@@ -104,27 +104,27 @@ namespace voice_extractor
             }
 
             UmaWaveStream copy = new(awbReader, waveId);
-            copy.Loop = false;
-            ISampleProvider wavSampleProvider;
-
-            if (waveFormat is not null)
+            try
             {
-                var convertedStream = new MediaFoundationResampler(copy, waveFormat);
-                wavSampleProvider = convertedStream.ToSampleProvider();
-            }
-            else
-            {
-                wavSampleProvider = copy.ToSampleProvider();
-            }
+                copy.Loop = false;
+                ISampleProvider wavSampleProvider = copy.ToSampleProvider();
 
-            var saveName = GetSaveName(savePath, saveFileprefix, waveId);
-            WaveFileWriter.CreateWaveFile16(saveName,
-                new VolumeSampleProvider(wavSampleProvider)
+                var saveName = GetSaveName(savePath, saveFileprefix, waveId);
+                if (waveFormat is not null)
+                {
+                    wavSampleProvider = ConvertSampleProvider(wavSampleProvider, waveFormat);
+                }
+
+                WriteWaveFile(saveName, new VolumeSampleProvider(wavSampleProvider)
                 {
                     Volume = wavVolume
-                });
-            copy.Dispose();
-            return saveName;
+                }, waveFormat ?? wavSampleProvider.WaveFormat);
+                return saveName;
+            }
+            finally
+            {
+                copy.Dispose();
+            }
         }
 
         public string ExtractAudioFromCueId([NotNull] string savePath, string saveFileprefix, int cueId, int gender = 0)
@@ -351,15 +351,126 @@ namespace voice_extractor
 
             using (var reader = new WaveFileReader(fileName))
             {
-                var convertedStream = new MediaFoundationResampler(reader,
-                    new WaveFormat(rate, bits, channels));
-                var wavSampleProvider = convertedStream.ToSampleProvider();
-                WaveFileWriter.CreateWaveFile16(saveName,
-                    new VolumeSampleProvider(wavSampleProvider)
-                    {
-                        Volume = 1.0f
-                    });
+                var wavSampleProvider = ConvertSampleProvider(reader.ToSampleProvider(), new WaveFormat(rate, bits, channels));
+                WriteWaveFile(saveName, new VolumeSampleProvider(wavSampleProvider)
+                {
+                    Volume = 1.0f
+                }, new WaveFormat(rate, bits, channels));
             }
+        }
+
+        private static ISampleProvider ConvertSampleProvider(ISampleProvider source, WaveFormat targetFormat)
+        {
+            ISampleProvider sampleProvider = source;
+
+            if (sampleProvider.WaveFormat.Channels != targetFormat.Channels)
+            {
+                sampleProvider = ConvertChannels(sampleProvider, targetFormat.Channels);
+            }
+
+            if (sampleProvider.WaveFormat.SampleRate != targetFormat.SampleRate)
+            {
+                sampleProvider = new WdlResamplingSampleProvider(sampleProvider, targetFormat.SampleRate);
+            }
+
+            return sampleProvider;
+        }
+
+        private static ISampleProvider ConvertChannels(ISampleProvider source, int targetChannels)
+        {
+            if (source.WaveFormat.Channels == targetChannels)
+            {
+                return source;
+            }
+
+            if (source.WaveFormat.Channels == 1 && targetChannels == 2)
+            {
+                return new MonoToStereoSampleProvider(source);
+            }
+
+            if (source.WaveFormat.Channels == 2 && targetChannels == 1)
+            {
+                return new StereoToMonoSampleProvider(source);
+            }
+
+            throw new NotSupportedException(
+                $"Channel conversion from {source.WaveFormat.Channels} to {targetChannels} is not supported.");
+        }
+
+        private static void WriteWaveFile(string saveName, ISampleProvider sourceProvider, WaveFormat targetFormat)
+        {
+            using var writer = new WaveFileWriter(saveName, targetFormat);
+            var sampleBuffer = new float[8192];
+            var byteBuffer = new byte[8192 * (targetFormat.BitsPerSample / 8)];
+
+            int samplesRead;
+            while ((samplesRead = sourceProvider.Read(sampleBuffer, 0, sampleBuffer.Length)) > 0)
+            {
+                var bytesWritten = ConvertSamplesToPcmBytes(sampleBuffer, samplesRead, targetFormat, byteBuffer);
+                writer.Write(byteBuffer, 0, bytesWritten);
+            }
+        }
+
+        private static int ConvertSamplesToPcmBytes(float[] samples, int samplesRead, WaveFormat targetFormat, byte[] buffer)
+        {
+            return targetFormat.BitsPerSample switch
+            {
+                8 => ConvertSamplesTo8BitPcm(samples, samplesRead, buffer),
+                16 => ConvertSamplesTo16BitPcm(samples, samplesRead, buffer),
+                24 => ConvertSamplesTo24BitPcm(samples, samplesRead, buffer),
+                32 => ConvertSamplesTo32BitPcm(samples, samplesRead, buffer),
+                _ => throw new NotSupportedException($"Unsupported bits per sample: {targetFormat.BitsPerSample}")
+            };
+        }
+
+        private static int ConvertSamplesTo8BitPcm(float[] samples, int samplesRead, byte[] buffer)
+        {
+            for (var i = 0; i < samplesRead; i++)
+            {
+                var sample = Math.Clamp(samples[i], -1.0f, 1.0f);
+                buffer[i] = (byte)Math.Round((sample + 1.0f) * 127.5f);
+            }
+
+            return samplesRead;
+        }
+
+        private static int ConvertSamplesTo16BitPcm(float[] samples, int samplesRead, byte[] buffer)
+        {
+            for (var i = 0; i < samplesRead; i++)
+            {
+                var sample = (short)Math.Round(Math.Clamp(samples[i], -1.0f, 1.0f) * short.MaxValue);
+                buffer[i * 2] = (byte)sample;
+                buffer[i * 2 + 1] = (byte)(sample >> 8);
+            }
+
+            return samplesRead * 2;
+        }
+
+        private static int ConvertSamplesTo24BitPcm(float[] samples, int samplesRead, byte[] buffer)
+        {
+            for (var i = 0; i < samplesRead; i++)
+            {
+                var sample = (int)Math.Round(Math.Clamp(samples[i], -1.0f, 1.0f) * 8388607.0f);
+                buffer[i * 3] = (byte)sample;
+                buffer[i * 3 + 1] = (byte)(sample >> 8);
+                buffer[i * 3 + 2] = (byte)(sample >> 16);
+            }
+
+            return samplesRead * 3;
+        }
+
+        private static int ConvertSamplesTo32BitPcm(float[] samples, int samplesRead, byte[] buffer)
+        {
+            for (var i = 0; i < samplesRead; i++)
+            {
+                var sample = (int)Math.Round(Math.Clamp(samples[i], -1.0f, 1.0f) * int.MaxValue);
+                buffer[i * 4] = (byte)sample;
+                buffer[i * 4 + 1] = (byte)(sample >> 8);
+                buffer[i * 4 + 2] = (byte)(sample >> 16);
+                buffer[i * 4 + 3] = (byte)(sample >> 24);
+            }
+
+            return samplesRead * 4;
         }
 
         private static float GetRms(AudioFileReader audioFileReader)

@@ -14,14 +14,24 @@ from .ulogger import logger as log
 from typing import List, Optional
 from . import models as m
 
+import sys
+
+def get_bundle_path(relative_path):
+    if getattr(sys, 'frozen', False):
+        return os.path.join(sys._MEIPASS, "voice_extractor_bin", os.path.basename(relative_path))
+    return os.path.join(os.getcwd(), "voice extractor/voice extractor/bin/Release/net9.0", os.path.basename(relative_path))
+
+runtime_config_path = get_bundle_path("voice extractor.runtimeconfig.json")
+dll_path = get_bundle_path("voice extractor.dll")
+
 rt = get_coreclr(
-    runtime_config="./voice extractor/voice extractor/bin/Release/net6.0/voice extractor.runtimeconfig.json"
+    runtime_config=runtime_config_path
 )
 set_runtime(rt)
 import clr
 
 # clr.FindAssembly("voice_extractor.dll")
-clr.AddReference("./voice extractor/voice extractor/bin/Release/net6.0/voice extractor")
+clr.AddReference(dll_path.replace(".dll", ""))
 from System.Collections.Generic import List as CsList
 from System.Collections.Generic import Dictionary as CsDict
 from System import UInt64, String, Object
