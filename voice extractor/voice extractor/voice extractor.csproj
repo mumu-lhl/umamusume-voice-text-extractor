@@ -4,7 +4,7 @@
         <RootNamespace>voice_extractor</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
-        <TargetFramework>net6.0</TargetFramework>
+        <TargetFramework>net9.0</TargetFramework>
         <LangVersion>10</LangVersion>
         <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     </PropertyGroup>
@@ -12,12 +12,12 @@
     <ItemGroup>
       <ProjectReference Include="..\AssetStudio\AssetStudioUtility\AssetStudioUtility.csproj" />
       <ProjectReference Include="..\AssetStudio\AssetStudio\AssetStudio.csproj" />
-      <ProjectReference Include="D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\AssetStudio\AssetStudio.PInvoke\AssetStudio.PInvoke.csproj" />
-      <ProjectReference Include="D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\AssetStudio\AssetStudioFBXWrapper\AssetStudioFBXWrapper.csproj" />
-      <ProjectReference Include="D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\AssetStudio\Texture2DDecoderWrapper\Texture2DDecoderWrapper.csproj" />
-      <ProjectReference Include="D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\ClHcaSharp\ClHcaSharp\ClHcaSharp.csproj" />
-      <ProjectReference Include="D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\CriWareLibrary\CriWareFormats\CriWareFormats.csproj" />
-      <ProjectReference Include="D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\UmaMusumeAudio\UmaMusumeAudio.csproj" />
+      <ProjectReference Include="..\AssetStudio\AssetStudio.PInvoke\AssetStudio.PInvoke.csproj" />
+      <ProjectReference Include="..\AssetStudio\AssetStudioFBXWrapper\AssetStudioFBXWrapper.csproj" />
+      <ProjectReference Include="..\AssetStudio\Texture2DDecoderWrapper\Texture2DDecoderWrapper.csproj" />
+      <ProjectReference Include="..\ClHcaSharp\ClHcaSharp\ClHcaSharp.csproj" />
+      <ProjectReference Include="..\CriWareLibrary\CriWareFormats\CriWareFormats.csproj" />
+      <ProjectReference Include="..\UmaMusumeAudio\UmaMusumeAudio.csproj" />
     </ItemGroup>
 
     <ItemGroup>
