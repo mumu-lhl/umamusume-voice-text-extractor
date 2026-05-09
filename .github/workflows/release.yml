@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for the release'
+        required: false
+        default: 'latest'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Build C# components
+        run: |
+          dotnet publish "voice extractor/voice extractor/voice extractor.csproj" -c Release -f net9.0 -o "voice extractor/voice extractor/bin/Release/net9.0"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build with PyInstaller
+        run: |
+          pyinstaller `
+            -i "gui/qtui/linqin_nawone.ico" `
+            -n "umamusume_voice_text_extractor" `
+            --clean `
+            --noupx `
+            --add-data "voice extractor/voice extractor/bin/Release/net9.0/*;voice extractor/voice extractor/bin/Release/net9.0" `
+            gui_main.py
+
+      - name: Zip Release
+        run: |
+          Compress-Archive -Path dist/umamusume_voice_text_extractor/* -DestinationPath umamusume_voice_text_extractor.zip
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag_name || github.ref_name }}
+          files: umamusume_voice_text_extractor.zip
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
