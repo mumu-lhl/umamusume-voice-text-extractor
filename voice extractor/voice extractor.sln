@@ -13,19 +13,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AssetStudioUtility", "Asset
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CRIWARE", "CRIWARE", "{92FC4991-9C63-4E42-AD3D-22AFF37EB0C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetStudio.PInvoke", "D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\AssetStudio\AssetStudio.PInvoke\AssetStudio.PInvoke.csproj", "{32BE66A3-50DF-4579-9547-A2566A8D42B6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetStudio.PInvoke", "AssetStudio\AssetStudio.PInvoke\AssetStudio.PInvoke.csproj", "{32BE66A3-50DF-4579-9547-A2566A8D42B6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetStudioFBXWrapper", "D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\AssetStudio\AssetStudioFBXWrapper\AssetStudioFBXWrapper.csproj", "{53B22C34-6D55-42E0-9915-470439A7201A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssetStudioFBXWrapper", "AssetStudio\AssetStudioFBXWrapper\AssetStudioFBXWrapper.csproj", "{53B22C34-6D55-42E0-9915-470439A7201A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClHcaSharp", "D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\ClHcaSharp\ClHcaSharp\ClHcaSharp.csproj", "{42AB7374-6D70-45FA-B192-214B3708F991}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClHcaSharp", "ClHcaSharp\ClHcaSharp\ClHcaSharp.csproj", "{42AB7374-6D70-45FA-B192-214B3708F991}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CriWareFormats", "D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\CriWareLibrary\CriWareFormats\CriWareFormats.csproj", "{8F8AAC90-B5CF-4585-986D-A202A2141243}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CriWareFormats", "CriWareLibrary\CriWareFormats\CriWareFormats.csproj", "{8F8AAC90-B5CF-4585-986D-A202A2141243}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Texture2DDecoderNative", "D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\AssetStudio\Texture2DDecoderNative\Texture2DDecoderNative.vcxproj", "{29356642-C46E-4144-83D8-22DC09D0D7FD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Texture2DDecoderNative", "AssetStudio\Texture2DDecoderNative\Texture2DDecoderNative.vcxproj", "{29356642-C46E-4144-83D8-22DC09D0D7FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Texture2DDecoderWrapper", "D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\AssetStudio\Texture2DDecoderWrapper\Texture2DDecoderWrapper.csproj", "{7F5AB147-6E3F-4208-81CD-A9F559BCC92B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Texture2DDecoderWrapper", "AssetStudio\Texture2DDecoderWrapper\Texture2DDecoderWrapper.csproj", "{7F5AB147-6E3F-4208-81CD-A9F559BCC92B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UmaMusumeAudio", "D:\chinosk_source\sdk_v2.6.5\umamusume_project\umamusume voice extractor\voice extractor\UmaMusumeAudio\UmaMusumeAudio.csproj", "{A96041F9-FC00-4D72-B1AD-FBEDBF50AE7F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UmaMusumeAudio", "UmaMusumeAudio\UmaMusumeAudio.csproj", "{A96041F9-FC00-4D72-B1AD-FBEDBF50AE7F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
